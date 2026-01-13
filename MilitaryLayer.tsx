@@ -44,7 +44,6 @@ const fetchData = async (type: MilitaryType) => {
     setLoading(true);
     setError(null);
     setData(null);
-    // TODO: Zmień kraj z PL na DE (Niemcy) i sprawdź różnicę 
     const query = ` 
     [out:json][timeout:60]; 
     area["ISO3166-1"="PL"]->.a;
