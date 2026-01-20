@@ -5,29 +5,15 @@ import axios from "axios";
 import osmtogeojson from "osmtogeojson"; 
 import type { FeatureCollection, GeoJsonObject } from "geojson";
 import L from "leaflet";
+import type {MilitaryType} from "./types/military.ts";
+import {MILITARY_TYPES, MILITARY_LABELS} from "./constants/military.ts";
 
 // ---- TYPY ---- 
-type MilitaryType = "barracks" | "naval_base" | "airfield" | "training_area" | "range" | "primary" | "office" | "danger_area" | "shelter" | "bunker"; 
 
 // ---- LISTA TYPÓW ---- 
-const MILITARY_TYPES: MilitaryType[] = [
-  "barracks", "naval_base", "airfield", "training_area", "range",
-  "office", "danger_area", "bunker"
-];  
-
+  
 // ---- ETYKIETY ---- 
-const MILITARY_LABELS: Record<MilitaryType, string> = {
-    barracks: "Koszary",
-    naval_base: "Baza morska",
-    airfield: "Lotnisko",
-    training_area: "Obszar szkoleniowy",
-    range: "Strzelnica",
-    primary: "Główne obiekty",
-    office: "Biuro",
-    danger_area: "Strefa niebezpieczna",
-    shelter: "Schron",
-    bunker: "Bunkier"
-}; 
+
 
 // ---- KOMPONENT MilitaryOSMLayer ----  
 export default function MilitaryOSMLayer() {
