@@ -26,32 +26,27 @@ export default function MilitaryOSMLayer() {
     const map = useMap();
 
 // ---- FUNKCJA POBIERANIA DANYCH ---- 
-const fetchData = async (type: MilitaryType) => { 
+const fetchData = async (type: MilitaryType) => { //asynchronizm żeby nie blokować gł wątku
     setLoading(true);
-    setError(null);
-    setData(null);
-    const query = ` 
-    [out:json][timeout:60]; 
-    area["ISO3166-1"="PL"]->.a;
-    ( 
-        way["military"="${type}"](area.a);
-        relation["military"="${type}"](area.a); 
-    ); 
-    out geom; `; 
-    
-    const requestUrl = 
-        "https://overpass.kumi.systems/api/interpreter?data=" + 
-        encodeURIComponent(query); 
     
     try {
-      const res = await axios.get(requestUrl);
-      const geojson = osmtogeojson(res.data) as FeatureCollection;
-      setData(geojson);
-    } catch (e) {
-        console.error("Błąd Overpass:", e);
-        setError("Nie udało się pobrać danych z OSM.");
-    } finally {
+      setData(null); // asynchroniczność - wątek może robić inne rzeczy gdy czeka 
+    
+      const url = `/data/${type}.json`;
+      const result = await fetch(url); //dzięki async await nie blokuje działania
+
+      if (!result.ok) {
+        console.error("File not found: ", url);
         setLoading(false);
+        return;
+      }
+
+      const geojson = await result.json();
+      setData(geojson);
+    } catch (error) {
+        console.error("File read error: ",error);
+    } finally {
+      setLoading(false);
     }
   };
 
