@@ -1,12 +1,13 @@
 // ---- IMPORTY ---- 
-import { useEffect, useState, useRef } from "react"; 
+import { useEffect, useState, useRef, useMemo } from "react"; 
 import { GeoJSON, useMap } from "react-leaflet"; 
-import axios from "axios";
-import osmtogeojson from "osmtogeojson"; 
-import type { FeatureCollection, GeoJsonObject } from "geojson";
+// import axios from "axios";
+// import osmtogeojson from "osmtogeojson"; 
+import type {FeatureCollection, GeoJsonObject } from "geojson";
 import L from "leaflet";
 import type {MilitaryType} from "./types/military.ts";
 import {MILITARY_TYPES, MILITARY_LABELS} from "./constants/military.ts";
+import Legend from "./components/Legend.tsx";
 
 // ---- TYPY ---- 
 
@@ -50,6 +51,20 @@ const fetchData = async (type: MilitaryType) => { //asynchronizm żeby nie bloko
     }
   };
 
+// filtrowanie i liczenie
+const filteredFeatures = useMemo(() => {
+  if (!data || !("features" in data)) return [];
+
+  return (data as FeatureCollection).features.filter((f) => {
+    const props = f.properties;
+    
+    return props?.tags?.military === militaryType || props?.military === militaryType;
+  });
+}, [data, militaryType]);
+
+const featureCount = filteredFeatures.length;
+
+
 // ---- useEffect: pobieranie danych ---- 
 useEffect(() => { fetchData(militaryType); }, [militaryType]); 
 
@@ -83,20 +98,51 @@ return (
           Ładowanie: {MILITARY_LABELS[militaryType]} 
         </div> )} 
     {/* ---- PRZYCISKI ---- */}
-      <div style={{ position: "absolute", top: "20px", left: "50px", zIndex: 9999, background: "rgba(255,255,255,0.9)", padding: "10px", borderRadius: "8px", boxShadow: "0 2px 6px rgba(0,0,0,0.25)", width: "auto", maxWidth: "80vw" }}>
-        <div style={{ fontWeight: "bold", marginBottom: "6px" }}>Typ obiektu (Niemcy):</div>
+      <div style={{ 
+        position: "absolute", 
+        top: "20px", 
+        left: "50px", 
+        zIndex: 9999, 
+        background: "rgba(255,255,255,0.9)", 
+        padding: "10px", 
+        borderRadius: "8px", 
+        boxShadow: "0 2px 6px rgba(0,0,0,0.25)", 
+        width: "auto", 
+        maxWidth: "80vw" 
+        }}>
+        <div style={{ 
+          fontWeight: "bold", 
+          marginBottom: "6px",
+          color: "#000" 
+          }}>
+            Typ obiektu (Polska):
+          </div>
+        
         {MILITARY_TYPES.map((type) => (
           <button
             key={type}
             onClick={() => setMilitaryType(type)}
             title={`Kliknij, aby zobaczyć: ${MILITARY_LABELS[type]}`} // TODO: Tooltip
-            style={{ margin: "4px", padding: "6px 10px", borderRadius: "6px", border: "1px solid #555", background: type === militaryType ? "#1a237e" : "#eee", color: type === militaryType ? "#fff" : "#000", cursor: "pointer" }}
+            style={{ 
+              margin: "4px", 
+              padding: "6px 10px", 
+              borderRadius: "6px", 
+              border: "1px solid #555", 
+              background: type === militaryType ? "#1a237e" : "#eee", 
+              color: type === militaryType ? "#fff" : "#000", 
+              cursor: "pointer" 
+            }}
           >
             {MILITARY_LABELS[type]}
           </button>
         ))}
       </div> 
-            
+      
+     <Legend 
+      label={MILITARY_LABELS[militaryType]} 
+      count={featureCount} 
+    />
+       
         {/* ---- WARSTWA GEOJSON ---- */}
       {data && (
         <GeoJSON

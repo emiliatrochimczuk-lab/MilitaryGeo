@@ -1,0 +1,19 @@
+.map-legend-panel {
+  position: absolute;
+  bottom: 30px; /* Odległość od dołu */
+  left: 30px;   /* Odległość od lewej */
+  z-index: 9999; /* Musi być bardzo wysoki, by być nad kafelkami mapy */
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border-left: 5px solid #1a237e;
+  min-width: 150px;
+  color: black; /* Upewnij się, że tekst nie jest biały na białym */
+}
+
+.legend-header {
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+}
