@@ -8,6 +8,7 @@ import L from "leaflet";
 import type {MilitaryType} from "./types/military.ts";
 import {MILITARY_TYPES, MILITARY_LABELS} from "./constants/military.ts";
 import Legend from "./components/Legend.tsx";
+import StyleControls from "./components/Style.tsx";
 
 // ---- TYPY ---- 
 
@@ -63,6 +64,13 @@ const filteredFeatures = useMemo(() => {
 }, [data, militaryType]);
 
 const featureCount = filteredFeatures.length;
+
+// zmiana stylu
+const [geoStyle, setGeoStyle] = useState({
+        color: "#0d47a1",
+        weight: 2,
+        opacity: 0.5
+    });
 
 
 // ---- useEffect: pobieranie danych ---- 
@@ -142,19 +150,21 @@ return (
       label={MILITARY_LABELS[militaryType]} 
       count={featureCount} 
     />
+
+    <StyleControls settings={geoStyle} onChange={setGeoStyle} />
        
         {/* ---- WARSTWA GEOJSON ---- */}
       {data && (
         <GeoJSON
-          key={militaryType}
+          key={`${militaryType}-${JSON.stringify(geoStyle)}`}
           data={data}
           ref={layerRef}
           style={{
-            color: "#0d47a1",
-            weight: 2,
-            opacity: 0.8,
-            fillColor: "#42a5f5",
-            fillOpacity: 0.5,
+            color: geoStyle.color,
+            weight: geoStyle.weight,
+            fillColor: geoStyle.color,
+            fillOpacity: geoStyle.opacity,
+            opacity: 0.8
           }}
         />
       )}
