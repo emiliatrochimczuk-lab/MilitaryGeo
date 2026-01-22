@@ -35,7 +35,7 @@ export default function StyleControls({ settings, onChange }: Props) {
       </div>
 
       <div className="control-field">
-        <label>Przezroczystość: {Math.round(settings.opacity * 100)}%</label>
+        <label>Nierzezroczystość: {Math.round(settings.opacity * 100)}%</label>
         <input 
           type="range" min="0" max="1" step="0.1" 
           value={settings.opacity} 
